@@ -41,6 +41,16 @@ async def cmd_cncl(message: types.Message, state: FSMContext) -> None:
     await message.reply("Отменил",
                         reply_markup=get_keyboard()
                         )
+    if os.path.isfile(f'./inventory{message.from_user.id}.xlsx'):
+        os.remove(f'./inventory{message.from_user.id}.xlsx')
+    else:
+        pass
+
+    if os.path.isfile(f'./orders{message.from_user.id}.xlsx'):
+        os.remove(f'./orders{message.from_user.id}.xlsx')
+    else:
+        pass
+
     await state.finish()
 
 @dp.message_handler(Text(equals="Начать новую инвентаризацию", ignore_case=True), state=None)
@@ -77,9 +87,15 @@ async def load_inventory(message: types.Message, state: FSMContext):
 
     await message.reply("Файлы загружены и обрабатываются...")
 
-    await bot.send_message(chat_id=message.from_user.id,
+    try:
+        await bot.send_message(chat_id=message.from_user.id,
                            text=inventarize(inventory=f'./inventory{message.from_user.id}.xlsx', orders=f'./orders{message.from_user.id}.xlsx'),
                            reply_markup=get_keyboard())
+    except KeyError:
+        await bot.send_message(chat_id=message.from_user.id,
+                               text="""Ой! Что-то сломалось...😿
+Вероятнее всего ты загрузил неправильный файл)))
+Попробуй отменить и сделать всё сначала""")
 
     if os.path.isfile(f'./inventory{message.from_user.id}.xlsx'):
         os.remove(f'./inventory{message.from_user.id}.xlsx')
