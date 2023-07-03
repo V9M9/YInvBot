@@ -90,11 +90,12 @@ async def load_inventory(message: types.Message, state: FSMContext):
     try:
         await bot.send_message(chat_id=message.from_user.id,
                            text=inventarize(inventory=f'./inventory{message.from_user.id}.xlsx', orders=f'./orders{message.from_user.id}.xlsx'),
-                           reply_markup=get_keyboard())
+                           reply_markup=get_keyboard(),
+                               parse_mode="HTML")
     except KeyError:
         await bot.send_message(chat_id=message.from_user.id,
                                text="""Ой! Что-то сломалось...😿
-Вероятнее всего ты загрузил неправильный файл)))
+Вероятнее всего был загружен неправильный файл.
 Попробуй отменить и сделать всё сначала""")
 
     if os.path.isfile(f'./inventory{message.from_user.id}.xlsx'):
