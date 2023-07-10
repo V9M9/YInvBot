@@ -88,10 +88,15 @@ async def load_inventory(message: types.Message, state: FSMContext):
     await message.reply("Файлы загружены и обрабатываются...")
 
     try:
+        msg = inventarize(inventory=f'./inventory{message.from_user.id}.xlsx', orders=f'./orders{message.from_user.id}.xlsx')
         await bot.send_message(chat_id=message.from_user.id,
-                           text=inventarize(inventory=f'./inventory{message.from_user.id}.xlsx', orders=f'./orders{message.from_user.id}.xlsx'),
+                           text= msg,
                            reply_markup=get_keyboard(),
                                parse_mode="HTML")
+        if msg == "Всё сошлось! Ты молодец!😉🥳":
+            await bot.send_sticker(chat_id=message.from_user.id, sticker="CAACAgIAAxkBAAEJoFhkqFUfOleFfeb_RMeffmX3e1CWFAACmBcAAtIM6Es6Gdj5wk3wcy8E")
+
+
     except KeyError:
         await bot.send_message(chat_id=message.from_user.id,
                                text="""Ой! Что-то сломалось...😿

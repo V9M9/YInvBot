@@ -1,4 +1,5 @@
 import pandas as pd
+from tabulate import tabulate
 
 def inventarize(orders, inventory):
     orders = pd.read_excel(orders)
@@ -17,18 +18,18 @@ def inventarize(orders, inventory):
 
     overc = real_inventarized['Номер заказа(orders)'].isna().sum()
     over_vals = real_inventarized[real_inventarized['Номер заказа(orders)'].isna()][
-        ['Номер заказа(Инвент)', 'Места']].to_string(index=False, col_space=25)
+        ['Номер заказа(Инвент)', 'Места']]
 
     shortage_count = real_inventarized['Номер заказа(Инвент)'].isna().sum()
-    shortage_vals = real_inventarized[real_inventarized['Номер заказа(Инвент)'].isna()][['Номер заказа(orders)' ,'Места']].to_string(index=False, col_space=25)
+    shortage_vals = real_inventarized[real_inventarized['Номер заказа(Инвент)'].isna()][['Номер заказа(orders)' ,'Места']]
 
     if overc == 0 and shortage_count == 0:
         return "Всё сошлось! Ты молодец!😉🥳"
 
-    return (f""" Излишков {overc} шт: 
-<b>{over_vals if overc > 0 else ""}</b>
+    return (f""" <pre>Излишков {overc} шт: </pre>
+<pre>{tabulate(over_vals, headers='keys', tablefmt='psql', showindex=False) if overc > 0 else ""}</pre>
 
-Недостач {shortage_count} шт:
-<b>{shortage_vals if shortage_count > 0 else ""}</b>
+<pre>Недостач {shortage_count} шт: </pre>
+<pre>{tabulate(shortage_vals, headers='keys', tablefmt='psql', showindex=False) if shortage_count > 0 else ""}</pre>
                 
     """)
